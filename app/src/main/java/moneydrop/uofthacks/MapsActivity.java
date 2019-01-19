@@ -8,7 +8,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PointOfInterest;
+
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -42,5 +46,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        setMapLongClick(mMap);
+        setPoiClick(mMap);
     }
+
+    private void setMapLongClick(final GoogleMap map) {
+        map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+//                String snippet = String.format(Locale.getDefault(),
+//                        "Lat: %1$.5f, Long: %2$.5f",
+//                        latLng.latitude,
+//                        latLng.longitude);
+                String snippet = "Dropped Pin";
+
+                map.addMarker(new MarkerOptions()
+                        .position(latLng)
+                        .snippet(snippet));
+            }
+        });
+    }
+
+    private void setPoiClick(final GoogleMap map) {
+        map.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
+            @Override
+            public void onPoiClick(PointOfInterest poi) {
+                Marker poiMarker = mMap.addMarker(new MarkerOptions()
+                        .position(poi.latLng)
+                        .title(poi.name));
+                poiMarker.showInfoWindow();
+            }
+        });
+    }
+
 }
